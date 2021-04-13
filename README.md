@@ -15,3 +15,15 @@ And for Windows we can generate an `.ico` file by loading a PNG into Gimp and re
 For customizing your app you'll need to change `name` and resources file-paths to match yours.
 
 > __This project is an educational example from [LearnPyQT.com](https://www.learnpyqt.com/examples/bitcoin-exchange-tracker/).__
+
+## Setup for development:
+* Install Python 3.7+ on your computer
+* python -m venv _venv
+* source _venv/bin/activate
+* pip install -r requirements.txt
+* python crypto.py
+
+## First-time only:
+* python -m venv _venv
+* pip install [all the necessary libraries]
+* pip freeze > requirements.txt
