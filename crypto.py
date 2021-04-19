@@ -12,7 +12,7 @@ import numpy as np
 
 import pyqtgraph as pg
 import requests
-
+import json
 
 # CryptoCompare.com API Key
 CRYPTOCOMPARE_API_KEY = 'a4a717e695ceee571062b05cf367b51317d57779b6fc53234abd5ce14659e81f'
@@ -22,7 +22,7 @@ DEFAULT_BASE_CURRENCY = 'USD'
 AVAILABLE_BASE_CURRENCIES = ['USD', 'EUR', 'GBP']
 
 # The crypto currencies to retrieve data about.
-AVAILABLE_CRYPTO_CURRENCIES = ['BTC', 'ETH', 'LTC', 'EOS', 'XRP', 'BCH' ] #
+AVAILABLE_CRYPTO_CURRENCIES = ['BTC', 'ETH', 'LTC', 'EOS', 'XRP', 'BCH']
 DEFAULT_DISPLAY_CURRENCIES = ['BTC', 'ETH', 'LTC']
 
 # Number of historic timepoints to plot (days).
@@ -30,7 +30,7 @@ NUMBER_OF_TIMEPOINTS = 150
 
 # Colour cycle to use for plotting currencies.
 BREWER12PAIRED = cycle(['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00',
-                  '#cab2d6', '#6a3d9a', '#ffff99', '#b15928' ])
+                        '#cab2d6', '#6a3d9a', '#ffff99', '#b15928'])
 
 # Base PyQtGraph configuration.
 pg.setConfigOption('background', 'w')
@@ -45,6 +45,7 @@ class WorkerSignals(QObject):
     progress = pyqtSignal(int)
     data = pyqtSignal(dict, list)
     cancel = pyqtSignal()
+
 
 class UpdateWorker(QRunnable):
     """
@@ -71,7 +72,7 @@ class UpdateWorker(QRunnable):
                     url.format(**{
                         'fsym': crypto,
                         'tsym': self.base_currency,
-                        'limit': NUMBER_OF_TIMEPOINTS-1,
+                        'limit': NUMBER_OF_TIMEPOINTS - 1,
                         'extraParams': 'www.learnpyqt.com',
                         'format': 'json',
                     }),
@@ -90,7 +91,7 @@ class UpdateWorker(QRunnable):
             r = requests.get(
                 url.format(**{
                     'tsym': self.base_currency,
-                    'limit': NUMBER_OF_TIMEPOINTS-1,
+                    'limit': NUMBER_OF_TIMEPOINTS - 1,
                     'extraParams': 'www.learnpyqt.com',
                     'format': 'json',
                 }),
@@ -114,6 +115,10 @@ class MainWindow(QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
+
+        self.base_currency = DEFAULT_BASE_CURRENCY
+        self._data_visible = DEFAULT_DISPLAY_CURRENCIES
+        self.fetch_from_json()
 
         layout = QHBoxLayout()
 
@@ -151,14 +156,11 @@ class MainWindow(QMainWindow):
         # Automatically rescale our twinned Y axis.
         self.p1.vb.sigResized.connect(self.update_plot_scale)
 
-        self.base_currency = DEFAULT_BASE_CURRENCY
-
         # Store a reference to lines on the plot, and items in our
         # data viewer we can update rather than redraw.
         self._data_lines = dict()
         self._data_items = dict()
         self._data_colors = dict()
-        self._data_visible = DEFAULT_DISPLAY_CURRENCIES
 
         self.listView = QTableView()
         self.model = QStandardItemModel()
@@ -218,6 +220,8 @@ class MainWindow(QMainWindow):
                 self._data_visible.append(currency)
                 self.redraw()
 
+        self.save_to_json()
+
     def get_currency_color(self, currency):
         if currency not in self._data_colors:
             self._data_colors[currency] = next(BREWER12PAIRED)
@@ -237,7 +241,7 @@ class MainWindow(QMainWindow):
         )))
         citem.setColumnCount(2)
         citem.setCheckable(True)
-        if currency in DEFAULT_DISPLAY_CURRENCIES:
+        if currency in self._data_visible:
             citem.setCheckState(Qt.Checked)
 
         vitem = QStandardItem()
@@ -267,6 +271,7 @@ class MainWindow(QMainWindow):
     def change_base_currency(self, currency):
         self.base_currency = currency
         self.refresh_historic_rates()
+        self.save_to_json()
 
     def refresh_historic_rates(self):
         if self.worker:
@@ -289,7 +294,7 @@ class MainWindow(QMainWindow):
         self.data = rates
         self.volume = volume
         self.redraw()
-        self.update_data_viewer(NUMBER_OF_TIMEPOINTS-1)
+        self.update_data_viewer(NUMBER_OF_TIMEPOINTS - 1)
 
     def progress_callback(self, progress):
         self.progress.setValue(progress)
@@ -356,6 +361,24 @@ class MainWindow(QMainWindow):
 
         self._market_activity.setData(x, self.volume)
         self.p2.setYRange(0, max(self.volume))
+
+    def save_to_json(self):
+        preferences = {
+            "base_currency": self.base_currency,
+            "display_currencies": self._data_visible
+        }
+
+        # Writing to json file
+        with open("preferences.json", "w") as write_file:
+            json.dump(preferences, write_file)
+
+    def fetch_from_json(self):
+        # Reading json file
+        with open("preferences.json", "r") as read_file:
+            preferences = json.load(read_file)
+            if preferences is not None:
+                self.base_currency = preferences["base_currency"]
+                self._data_visible = preferences["display_currencies"]
 
 
 if __name__ == '__main__':
