@@ -1,29 +1,58 @@
-# PythonCryptoTracker
- 
-## Implementation:
-* ### Get a [free developer API access](https://min-api.cryptocompare.com/) from [CryptoCompare.com](http://cryptocompae.com/) for non-commercial purposes, including historic data.
-* ### Packaging:
-    * Install PyInstaller with `pip3 install pyinstaller` then run `pyinstaller crypto.py` after going into your project's directory.
-    * Create a `.spec` file.
-  
-## Icons:
-We need to use `makeicns.sh` file and `chmod +x makeicns.sh` to generate an `.icns` bundle for MacOS from a single PNG: `./makeicns.sh bitcoin-icon.png`.
+# PythonCryptoTracker 📈
 
-And for Windows we can generate an `.ico` file by loading a PNG into Gimp and resize down to 3 separate layers (64,32,16). Unlike MacOS we can provide a single square image, and it will automatically be resized, just ensure it's saved as `.ico`.
+PythonCryptoTracker is a comprehensive tool that leverages the [CryptoCompare.com](http://cryptocompae.com/) API to track cryptocurrency prices. With a user-friendly interface and real-time data fetching capabilities, this tracker is designed for both beginners and seasoned crypto enthusiasts.
 
-## .spec File:
-For customizing your app you'll need to change `name` and resources file-paths to match yours.
+## Features 🌟
 
-> __This project is an educational example from [LearnPyQT.com](https://www.learnpyqt.com/examples/bitcoin-exchange-tracker/).__
+- **Real-time Data**: Fetches the latest cryptocurrency prices from [CryptoCompare.com](http://cryptocompae.com/).
+- **Historic Data**: Access historical data for a comprehensive analysis.
+- **Custom Icons**: Customizable icons for MacOS and Windows.
+- **Packaging**: Easily package the application using PyInstaller.
 
-## Setup for development:
-* Install Python 3.7+ on your computer
-* python -m venv _venv
-* source _venv/bin/activate
-* pip install -r requirements.txt
-* python crypto.py
+## Getting Started 🚀
 
-## First-time only:
-* python -m venv _venv
-* pip install [all the necessary libraries]
-* pip freeze > requirements.txt
+### Prerequisites
+
+1. Python 3.7+
+2. [Free developer API access](https://min-api.cryptocompare.com/) from [CryptoCompare.com](http://cryptocompae.com/).
+
+### Installation
+
+1. Clone the repository.
+2. Set up a virtual environment:
+   ```bash
+   python -m venv _venv
+   source _venv/bin/activate
+   ```
+3. Install the required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+### Running the application
+Execute the main script:
+```bash
+python crypto.py
+```
+
+### Packaging the Application 📦
+1. Install PyInstaller:
+```bash
+pip3 install pyinstaller
+```
+2. Navigate to your project's directory and run:
+```bash
+pyinstaller crypto.py
+```
+
+### Custom Icons 🎨
+- For MacOS: Use the makeicns.sh file to generate an .icns bundle. Execute the following:
+  ```bash
+  chmod +x makeicns.sh
+  ./makeicns.sh bitcoin-icon.png
+  ```
+- For Windows: Generate an .ico file by loading a PNG into Gimp and resizing it to 3 separate layers (64,32,16). Save it as .ico.
+
+### Contributing 🤝
+Contributions are welcome! If you have any improvements, features, or bug fixes, feel free to create a pull request.
+
+> Note: This project is an educational example from [LearnPyQT.com](https://www.learnpyqt.com/examples/bitcoin-exchange-tracker/).
